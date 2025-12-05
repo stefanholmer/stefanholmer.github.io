@@ -27,7 +27,6 @@ ConstantSource -> AW1 (add signature) +                                         
         <p>In the case of (a), the simulated processing is done in a dedicated worker that reads audio from a MediaStream (typically originating from getUserMedia), while in the case of (b) the audio is transferred directly to a dedicated worker from the AW1 to do the simulated processing, and then transferred back to be put in a queue to be put in the AW1 output of process() of the AudioWorkletProcessor. It's only for the purpose of this demo (we want to measure the latency) that getUserMedia is replaced with a constant source connected to AW1, and in the same way AW2 is only connected to PC2 to detect the signature and measure the latency.</p>
     </div>
     <button id="startButton">Start Demo</button>
-    <div id="glitchCount">Glitches: 0</div>
     <div>
         <input type="checkbox" id="useAW" name="useAW" checked>
         <label for="useAW">AudioWorklet</label>
@@ -38,6 +37,7 @@ ConstantSource -> AW1 (add signature) +                                         
     <div id="graphsContainer" style="display: flex; flex-wrap: wrap; justify-content: center; gap: 20px; margin-top: 20px;">
         <div id="awGraphContainer" style="display: none;">
             <h3>AudioWorklet</h3>
+            <div id="glitchCount">Glitches: 0</div>
             <canvas id="awGraph" width="600" height="300" style="border: 1px solid #ccc;"></canvas>
         </div>
         <div id="mstpGraphContainer" style="display: none;">
