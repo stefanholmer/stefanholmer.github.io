@@ -9,6 +9,23 @@
 </head>
 <body>
     <h1>AudioWorklet Latency Demo</h1>
+    <div id="description" style="text-align: left; max-width: 900px; margin: 0 auto;">
+        <p>This is a demo of using AudioWorklets compared to MediaStreamTrackProcessor (MSTP)/MediaStreamTrackGenerator (MSTG) to process an audio MediaStream that is to be sent between two PeerConnections to be rendered at the other end.</p>
+        
+        <div style="font-family: monospace; background: #f4f4f4; padding: 10px; border-radius: 4px; overflow-x: auto; font-size: 0.7em; white-space: pre;">
+                                          (Case a: MSTP)
+                                      +-> MediaStreamDestination -> MSTP -> Worker -> MSTG --+
+                                      |                                                      |
+ConstantSource -> AW1 (add signature) +                                                      +-> PC1 -> PC2 -> MediaStreamSource -> AW2
+                                      |                                                      |
+                                      +-> Worker -> AW1 -> MediaStreamDestination -----------+
+                                          (Case b: AudioWorklet)
+        </div>
+
+        <p>On the capture-side WebAudio is used to generate a constant audio source which is connected to an AudioWorklet (aw1) which periodically adds a short sine-wave as a signature (this signature is later detected on the render-side so that the latency can be measured). The audio signal is then either (a) written back to the output or (b) passed to a dedicated worker for the processing to be applied.</p>
+        
+        <p>In the case of (a), the simulated processing is done in a dedicated worker that reads audio from a MediaStream (typically originating from getUserMedia), while in the case of (b) the audio is transferred directly to a dedicated worker from the AW1 to do the simulated processing, and then transferred back to be put in a queue to be put in the AW1 output of process() of the AudioWorkletProcessor. It's only for the purpose of this demo (we want to measure the latency) that getUserMedia is replaced with a constant source connected to AW1, and in the same way AW2 is only connected to PC2 to detect the signature and measure the latency.</p>
+    </div>
     <button id="startButton">Start Demo</button>
     <div id="glitchCount">Glitches: 0</div>
     <div>
