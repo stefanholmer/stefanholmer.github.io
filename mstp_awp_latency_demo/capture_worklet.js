@@ -36,7 +36,7 @@ class CaptureWorklet extends AudioWorkletProcessor {
         if (positionInInterval === 0) {
           if (currentSampleIndex > sampleRate * 2) { // Wait 2 seconds
             this.injectingSignature = true;
-            this.port.postMessage({ type: 'signature_sent', timestamp: currentTime + i / sampleRate });
+            this.port.postMessage({ type: 'signature_sent', timestamp: currentTime });
           } else {
             this.injectingSignature = false;
           }
@@ -49,19 +49,23 @@ class CaptureWorklet extends AudioWorkletProcessor {
       this.sampleCount += inputData.length;
 
       if (this.mode === 'aw') {
+        // Send to AW worker for processing.
         this.port.postMessage({ type: 'process_audio', audio: inputData, glitchCount: this.glitchCount, captureTimestamp: currentTime }, [inputData.buffer]);
       } else if (this.mode === 'mstp') {
-        // Output signed audio directly for MSTP
+        // Output signed audio directly for MSTP mode as "processing" is done
+        // in later after reading the audio from MSTP.
         for (let channel = 0; channel < output.length; channel++) {
           if (output[channel]) {
             output[channel].set(inputData);
           }
         }
-        return true; // Done for MSTP
+        return true;
       }
     }
 
     if (this.mode === 'aw') {
+      // Write any processed audio to the output if available.
+      // Otherwise fill with zeros and increment the glitch count.
       if (this.outputBuffer.length > 0) {
         const processedData = this.outputBuffer.shift();
         for (let channel = 0; channel < output.length; channel++) {

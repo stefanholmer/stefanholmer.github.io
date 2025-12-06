@@ -7,7 +7,6 @@ class Pipeline {
         this.latencyData = [];
         this.lastSentTimestamp = 0;
         this.isSignaturePending = false;
-        this.delayApplied = {3: false, 6: false, 9: false};
     }
 
     async start() {
@@ -217,7 +216,9 @@ async function startDemo() {
     }
     if (useMSTP) {
         document.getElementById('mstpGraphContainer').style.display = 'block';
-        const mstpPipeline = new Pipeline('mstp', 'mstpGraph', null); // MSTP doesn't have glitch count yet
+         // MSTP doesn't have glitch count yet, but the maxBufferSize parameter
+         // is set to 50 so that no glitches will happen in this demo.
+        const mstpPipeline = new Pipeline('mstp', 'mstpGraph', null);
         mstpPipeline.start();
     }
 }

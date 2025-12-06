@@ -13,23 +13,19 @@ self.onmessage = async (e) => {
 
         const performanceNow = performance.now() / 1000;
 
-        if (!this.delayApplied) this.delayApplied = {3: false, 6: false, 9: false};
+        if (!this.nextBlipTime) {
+            this.nextBlipTime = 3.0;
+        }
 
         let delayMs = 0;
-        if (performanceNow >= 9.0 && !this.delayApplied[9]) {
-            delayMs = 300;
-            this.delayApplied[9] = true;
-        } else if (performanceNow >= 6.0 && !this.delayApplied[6]) {
-            delayMs = 200;
-            this.delayApplied[6] = true;
-        } else if (performanceNow >= 3.0 && !this.delayApplied[3]) {
-            delayMs = 100;
-            this.delayApplied[3] = true;
+        if (performanceNow >= this.nextBlipTime && this.nextBlipTime <= 9.0) {
+            delayMs = 100 * performanceNow / 3;
+            this.nextBlipTime += 3.0;
         }
 
         if (delayMs > 0) {
-            const start = Date.now();
-            while (Date.now() - start < delayMs) {
+            const start = performance.now();
+            while (performance.now() - start < delayMs) {
                 // Busy wait
             }
             console.log(`Worker thread delay of ${delayMs}ms at ${performanceNow.toFixed(2)}s`);
