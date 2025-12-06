@@ -1,4 +1,4 @@
-this.nextBlipTime = 3.0;
+let nextBlipTime = 3.0;
 
 self.onmessage = (e) => {
     if (e.data.type === 'process_audio') {
@@ -6,9 +6,9 @@ self.onmessage = (e) => {
         const performanceNow = performance.now() / 1000;
 
         let delayMs = 0;
-        if (performanceNow >= this.nextBlipTime && this.nextBlipTime <= 9.0) {
+        if (performanceNow >= nextBlipTime && nextBlipTime <= 9.0) {
             delayMs = 100 * performanceNow / 3;
-            this.nextBlipTime += 3.0;
+            nextBlipTime += 3.0;
         }
 
         if (delayMs > 0) {

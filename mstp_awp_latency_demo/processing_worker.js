@@ -4,6 +4,8 @@ self.onmessage = async (e) => {
     const reader = readable.getReader();
     const writer = writable.getWriter();
 
+    let nextBlipTime = 3.0;
+
     while (true) {
         const { done, value: audioFrame } = await reader.read();
         if (done) break;
@@ -13,14 +15,10 @@ self.onmessage = async (e) => {
 
         const performanceNow = performance.now() / 1000;
 
-        if (!this.nextBlipTime) {
-            this.nextBlipTime = 3.0;
-        }
-
         let delayMs = 0;
-        if (performanceNow >= this.nextBlipTime && this.nextBlipTime <= 9.0) {
+        if (performanceNow >= nextBlipTime && nextBlipTime <= 9.0) {
             delayMs = 100 * performanceNow / 3;
-            this.nextBlipTime += 3.0;
+            nextBlipTime += 3.0;
         }
 
         if (delayMs > 0) {
